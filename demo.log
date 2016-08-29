@@ -1,0 +1,284 @@
+('pandas version', u'0.18.1')
+('joblib version', '0.10.0')
+compute done for worker 0
+will append to hdf for worker 0
+appended to hdf for worker 0
+compute done for worker 1
+will append to hdf for worker 1
+appended to hdf for worker 1
+compute done for worker 2
+will append to hdf for worker 2
+appended to hdf for worker 2
+compute done for worker 3
+will append to hdf for worker 3
+appended to hdf for worker 3
+compute done for worker 4
+will append to hdf for worker 4
+appended to hdf for worker 4
+compute done for worker 5
+will append to hdf for worker 5
+appended to hdf for worker 5
+compute done for worker 6
+will append to hdf for worker 6
+appended to hdf for worker 6
+compute done for worker 7
+will append to hdf for worker 7
+appended to hdf for worker 7
+compute done for worker 8
+will append to hdf for worker 8
+appended to hdf for worker 8
+compute done for worker 9
+will append to hdf for worker 9
+appended to hdf for worker 9
+compute done for worker 10
+will append to hdf for worker 10
+appended to hdf for worker 10
+compute done for worker 11
+will append to hdf for worker 11
+appended to hdf for worker 11
+compute done for worker 12
+will append to hdf for worker 12
+appended to hdf for worker 12
+compute done for worker 13
+will append to hdf for worker 13
+appended to hdf for worker 13
+compute done for worker 14
+will append to hdf for worker 14
+appended to hdf for worker 14
+compute done for worker 15
+will append to hdf for worker 15
+appended to hdf for worker 15
+compute done for worker 16
+will append to hdf for worker 16
+appended to hdf for worker 16
+compute done for worker 17
+will append to hdf for worker 17
+appended to hdf for worker 17
+compute done for worker 18
+will append to hdf for worker 18
+appended to hdf for worker 18
+compute done for worker 19
+will append to hdf for worker 19
+appended to hdf for worker 19
+0.00552578369776
+compute done for worker 1
+will append to hdf for worker 1
+appended to hdf for worker 1
+compute done for worker 6
+will append to hdf for worker 6
+appended to hdf for worker 6
+compute done for worker 2
+will append to hdf for worker 2
+appended to hdf for worker 2
+compute done for worker 5
+will append to hdf for worker 5
+appended to hdf for worker 5
+compute done for worker 18
+will append to hdf for worker 18
+appended to hdf for worker 18
+compute done for worker 19
+will append to hdf for worker 19
+appended to hdf for worker 19
+compute done for worker 3
+will append to hdf for worker 3
+appended to hdf for worker 3
+compute done for worker 7
+Traceback (most recent call last):
+  File "demo_problem.py", line 33, in <module>
+    Parallel(n_jobs=-1)(delayed(workers)(i, fname) for i in range(20))
+  File "/usr/local/miniconda/lib/python2.7/site-packages/joblib/parallel.py", line 764, in __call__
+    self.retrieve()
+  File "/usr/local/miniconda/lib/python2.7/site-packages/joblib/parallel.py", line 715, in retrieve
+    raise exception
+joblib.my_exceptions.JoblibHDF5ExtError: JoblibHDF5ExtError
+___________________________________________________________________________
+Multiprocessing exception:
+...........................................................................
+/Users/rbiswas/src/parallelWriteHDF/demo_problem.py in <module>()
+     28 fname = 'test_parallel.hdf'
+     29 if os.path.exists(fname):
+     30     os.remove(fname)
+     31 
+     32 tstart = time.time()
+---> 33 Parallel(n_jobs=-1)(delayed(workers)(i, fname) for i in range(20))
+     34 tend = time.time()
+     35 print(tend -  tstart)/60.
+     36 
+     37 
+
+...........................................................................
+/usr/local/miniconda/lib/python2.7/site-packages/joblib/parallel.py in __call__(self=Parallel(n_jobs=-1), iterable=<generator object <genexpr>>)
+    759             if pre_dispatch == "all" or n_jobs == 1:
+    760                 # The iterable was consumed all at once by the above for loop.
+    761                 # No need to wait for async callbacks to trigger to
+    762                 # consumption.
+    763                 self._iterating = False
+--> 764             self.retrieve()
+        self.retrieve = <bound method Parallel.retrieve of Parallel(n_jobs=-1)>
+    765             # Make sure that we get a last message telling us we are done
+    766             elapsed_time = time.time() - self._start_time
+    767             self._print('Done %3i out of %3i | elapsed: %s finished',
+    768                         (len(self._output), len(self._output),
+
+---------------------------------------------------------------------------
+Sub-process traceback:
+---------------------------------------------------------------------------
+HDF5ExtError                                       Sun Aug 28 23:15:22 2016
+PID: 7644                    Python 2.7.12: /usr/local/miniconda/bin/python
+...........................................................................
+/usr/local/miniconda/lib/python2.7/site-packages/joblib/parallel.py in __call__(self=<joblib.parallel.BatchedCalls object>)
+    122     def __init__(self, iterator_slice):
+    123         self.items = list(iterator_slice)
+    124         self._size = len(self.items)
+    125 
+    126     def __call__(self):
+--> 127         return [func(*args, **kwargs) for func, args, kwargs in self.items]
+        func = <function workers>
+        args = (7, 'test_parallel.hdf')
+        kwargs = {}
+        self.items = [(<function workers>, (7, 'test_parallel.hdf'), {})]
+    128 
+    129     def __len__(self):
+    130         return self._size
+    131 
+
+...........................................................................
+/Users/rbiswas/src/parallelWriteHDF/demo_problem.py in workers(i=7, filename='test_parallel.hdf')
+     12 # mysize= 1000000
+     13 def workers(i, filename='test.hdf'):
+     14     mysize= 10
+     15     df = pd.DataFrame(dict(nums=np.arange(i, i+mysize, 1)))
+     16     print 'compute done for worker {}'.format(i)
+---> 17     with pd.get_store(filename) as store:
+        filename = 'test_parallel.hdf'
+        store = undefined
+     18         print 'will append to hdf for worker {}'.format(i)
+     19         store.append('output_{}'.format(i), df)
+     20         print 'appended to hdf for worker {}'.format(i)
+     21 # first do this serially
+
+...........................................................................
+/usr/local/miniconda/lib/python2.7/site-packages/pandas/io/pytables.py in get_store(path='test_parallel.hdf', **kwargs={})
+   1273 
+   1274 
+   1275 def get_store(path, **kwargs):
+   1276     """ Backwards compatible alias for ``HDFStore``
+   1277     """
+-> 1278     return HDFStore(path, **kwargs)
+        path = 'test_parallel.hdf'
+        kwargs = {}
+   1279 
+   1280 
+   1281 class TableIterator(object):
+   1282 
+
+...........................................................................
+/usr/local/miniconda/lib/python2.7/site-packages/pandas/io/pytables.py in __init__(self=<class 'pandas.io.pytables.HDFStore'>
+File path: test_parallel.hdf
+File is CLOSED, path='test_parallel.hdf', mode='a', complevel=None, complib=None, fletcher32=False, **kwargs={})
+    399         self._handle = None
+    400         self._complevel = complevel
+    401         self._complib = complib
+    402         self._fletcher32 = fletcher32
+    403         self._filters = None
+--> 404         self.open(mode=mode, **kwargs)
+        self.open = <bound method HDFStore.open of <class 'pandas.io...re'>
+File path: test_parallel.hdf
+File is CLOSED>
+        mode = 'a'
+        kwargs = {}
+    405 
+    406     @property
+    407     def root(self):
+    408         """ return the root node """
+
+...........................................................................
+/usr/local/miniconda/lib/python2.7/site-packages/pandas/io/pytables.py in open(self=<class 'pandas.io.pytables.HDFStore'>
+File path: test_parallel.hdf
+File is CLOSED, mode='a', **kwargs={})
+    538             self._filters = _tables().Filters(self._complevel,
+    539                                               self._complib,
+    540                                               fletcher32=self._fletcher32)
+    541 
+    542         try:
+--> 543             self._handle = tables.open_file(self._path, self._mode, **kwargs)
+        self._handle = None
+        tables.open_file = <function open_file>
+        self._path = 'test_parallel.hdf'
+        self._mode = 'a'
+        kwargs = {}
+    544         except (IOError) as e:  # pragma: no cover
+    545             if 'can not be written' in str(e):
+    546                 print('Opening %s in read-only mode' % self._path)
+    547                 self._handle = tables.open_file(self._path, 'r', **kwargs)
+
+...........................................................................
+/usr/local/miniconda/lib/python2.7/site-packages/tables/file.py in open_file(filename='test_parallel.hdf', mode='a', title='', root_uep='/', filters=None, **kwargs={})
+    313                 raise ValueError(
+    314                     "The file '%s' is already opened.  Please "
+    315                     "close it before reopening in write mode." % filename)
+    316 
+    317     # Finally, create the File instance, and return it
+--> 318     return File(filename, mode, title, root_uep, filters, **kwargs)
+        filename = 'test_parallel.hdf'
+        mode = 'a'
+        title = ''
+        root_uep = '/'
+        filters = None
+        kwargs = {}
+    319 
+    320 openFile = previous_api(open_file)
+    321 
+    322 
+
+...........................................................................
+/usr/local/miniconda/lib/python2.7/site-packages/tables/file.py in __init__(self=<class 'tables.file.File'> instance, filename='test_parallel.hdf', mode='a', title='', root_uep='/', filters=None, **kwargs={})
+    779             params['MAX_BLOSC_THREADS'] = detect_number_of_cores()
+    780 
+    781         self.params = params
+    782 
+    783         # Now, it is time to initialize the File extension
+--> 784         self._g_new(filename, mode, **params)
+        self._g_new = <built-in method _g_new of File object>
+        filename = 'test_parallel.hdf'
+        mode = 'a'
+        params = {'BOUNDS_MAX_SIZE': 1048576, 'BOUNDS_MAX_SLOTS': 4096, 'BUFFER_TIMES': 100, 'CHUNK_CACHE_NELMTS': 521, 'CHUNK_CACHE_PREEMPT': 0.0, 'CHUNK_CACHE_SIZE': 2097152, 'COND_CACHE_SLOTS': 128, 'DISABLE_EVERY_CYCLES': 10, 'DRIVER': None, 'DRIVER_CORE_BACKING_STORE': 1, ...}
+    785 
+    786         # Check filters and set PyTables format version for new files.
+    787         new = self._v_new
+    788         if new:
+
+...........................................................................
+/usr/local/miniconda/lib/python2.7/site-packages/tables/hdf5extension.so in tables.hdf5extension.File._g_new (tables/hdf5extension.c:5593)()
+    483 
+    484 
+    485 
+    486 
+    487 
+--> 488 
+    489 
+    490 
+    491 
+    492 
+
+HDF5ExtError: HDF5 error back trace
+
+  File "H5F.c", line 604, in H5Fopen
+    unable to open file
+  File "H5Fint.c", line 1087, in H5F_open
+    unable to read superblock
+  File "H5Fsuper.c", line 294, in H5F_super_read
+    unable to load superblock
+  File "H5AC.c", line 1262, in H5AC_protect
+    H5C_protect() failed.
+  File "H5C.c", line 3574, in H5C_protect
+    can't load entry
+  File "H5C.c", line 7954, in H5C_load_entry
+    unable to load entry
+  File "H5Fsuper_cache.c", line 476, in H5F_sblock_load
+    truncated file: eof = 84085, sblock->base_addr = 0, stored_eoa = 154661
+
+End of HDF5 error back trace
+
+Unable to open/create file 'test_parallel.hdf'
+___________________________________________________________________________
